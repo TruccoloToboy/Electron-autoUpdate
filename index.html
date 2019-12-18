@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Hikvision API search</title>
+    <link rel="stylesheet" href="../node_modules/spectre.css/dist/spectre.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<style>
+    #notification {
+        position:fixed;
+        bottom: 20px;
+        left: 20px;
+        width: 200px;
+        padding: 20px;
+        border-radius: 5px;
+        background-color: white;
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    }
+    .hidden {
+        display: none;
+    }
+</style>
+<script>
+    const notification = document.getElementById('notification');
+    const message = document.getElementById('message');
+    const restartButton = document.getElementById('restart=button');
+
+    ipcRenderer.on('update_avaliable', () =>{
+        ipcRenderer.removeAllListeners('update_avaiable');
+        message.innerText = 'A new update is avaliable. Downloading now...';
+        notification.classList.remove('hidden');
+    });
+
+    ipcRenderer.on('update_downloaded', () => {
+        ipcRenderer.removeAllListeners('update_dowloaded');
+        message.innerText = "Update Downloaded. It will be installed on restart. Restart now?";
+        restartButton.classList.remove('hidden');
+        notification.classList.remove('hidden');
+    });
+
+    function closeNotification() {
+        notification.classList.add('hidden');
+    }
+
+    function restartApp() {
+        ipcRenderer.send('restart_app');
+    }
+</script>
+<body>
+<div class="container">
+    <div class="columns">
+        <div class="column col-10">
+            <h1 class="text-center">Hikvision API Search</h1>
+            <button id="createTodoBtn" type="button" class="btn">Inserir novo endereço de API Hikvision</button>
+            <ul id="todoList"></ul>
+        </div>
+    </div>
+</div>
+<div id="notification" class="hidden">
+    <p id="message"></p>
+    <button id="close-button" onClick="closeNotification()">Close</button>
+    <button id="restart-button" onclick="restartApp()" class="hidden">Restart</button>
+</div>
+<script src="index.js"></script>
+</body>
+</html>
+
